@@ -6,7 +6,7 @@
 <style>
     body {
         font-family: Arial, sans-serif;
-        background: #1e1e2f;
+        background: linear-gradient(135deg, #1e1e2f, #2b2b44);
         color: #fff;
         display: flex;
         justify-content: center;
@@ -15,7 +15,7 @@
         min-height: 100vh;
         margin: 0;
     }
-    h1 { color: #ff4081; }
+    h1 { color: #ff4081; margin-bottom: 20px; }
     input, button {
         padding: 10px;
         margin: 5px;
@@ -24,7 +24,8 @@
         font-size: 16px;
     }
     input { width: 200px; }
-    button { background: #ff4081; color: #fff; cursor: pointer; }
+    button { background: #ff4081; color: #fff; cursor: pointer; transition: 0.3s; }
+    button:hover { background: #ff1f70; }
     table { margin-top: 20px; border-collapse: collapse; width: 90%; }
     th, td { border: 1px solid #fff; padding: 10px; text-align: center; }
     th { background: #ff4081; }

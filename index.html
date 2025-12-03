@@ -1,51 +1,98 @@
-import csv
-import os
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>سجل التمارين</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #1e1e2f;
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        min-height: 100vh;
+        margin: 0;
+    }
+    h1 { color: #ff4081; }
+    input, button {
+        padding: 10px;
+        margin: 5px;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+    input { width: 200px; }
+    button { background: #ff4081; color: #fff; cursor: pointer; }
+    table { margin-top: 20px; border-collapse: collapse; width: 90%; }
+    th, td { border: 1px solid #fff; padding: 10px; text-align: center; }
+    th { background: #ff4081; }
+</style>
+</head>
+<body>
+<h1>📋 سجل التمارين</h1>
 
-# اسم الملف اللي راح يخزن فيه التمارين
-file_name = "my_workouts.csv"
+<div>
+    <input type="text" id="exercise" placeholder="اسم التمرين">
+    <input type="number" id="weight" placeholder="الوزن (كجم)">
+    <input type="number" id="reps" placeholder="عدد العدات">
+    <input type="number" id="sets" placeholder="عدد الجلسات">
+    <button onclick="addWorkout()">➕ أضف التمرين</button>
+</div>
 
-# إذا الملف مو موجود، نضيف العناوين
-if not os.path.exists(file_name):
-    with open(file_name, mode='w', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow(["التمرين", "الوزن (كجم)", "العدّات", "الجلسات"])
+<table id="workoutTable">
+    <tr>
+        <th>التمرين</th>
+        <th>الوزن (كجم)</th>
+        <th>العدات</th>
+        <th>الجلسات</th>
+    </tr>
+</table>
 
-def add_workout():
-    تمرين = input("اسم التمرين: ")
-    وزن = input("الوزن (كجم): ")
-    عدات = input("عدد العدات: ")
-    جلسات = input("عدد الجلسات: ")
+<script>
+function addWorkout() {
+    const exercise = document.getElementById('exercise').value;
+    const weight = document.getElementById('weight').value;
+    const reps = document.getElementById('reps').value;
+    const sets = document.getElementById('sets').value;
 
-    with open(file_name, mode='a', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow([تمرين, وزن, عدات, جلسات])
-    print(f"✅ تم تسجيل التمرين: {تمرين} بنجاح!\n")
+    if (!exercise || !weight || !reps || !sets) {
+        alert("❌ املأ كل الحقول!");
+        return;
+    }
 
-def show_workouts():
-    if not os.path.exists(file_name):
-        print("لا يوجد تمارين مسجلة بعد.\n")
-        return
-    print("\n📋 قائمة التمارين المسجلة:")
-    with open(file_name, mode='r') as file:
-        reader = csv.reader(file)
-        for row in reader:
-            print(" | ".join(row))
-    print()
+    const table = document.getElementById('workoutTable');
+    const row = table.insertRow();
+    row.insertCell(0).innerText = exercise;
+    row.insertCell(1).innerText = weight;
+    row.insertCell(2).innerText = reps;
+    row.insertCell(3).innerText = sets;
 
-# واجهة مستخدم بسيطة وحديثة
-while True:
-    print("==== سجل تمارينك ====")
-    print("1️⃣  إضافة تمرين")
-    print("2️⃣  عرض كل التمارين")
-    print("3️⃣  خروج")
-    choice = input("اختار خيار: ")
+    // حفظ في localStorage
+    let workouts = JSON.parse(localStorage.getItem('workouts') || "[]");
+    workouts.push({exercise, weight, reps, sets});
+    localStorage.setItem('workouts', JSON.stringify(workouts));
 
-    if choice == "1":
-        add_workout()
-    elif choice == "2":
-        show_workouts()
-    elif choice == "3":
-        print("💖 باي باي يا جلالة الأمير المبجل مولاي نايف!")
-        break
-    else:
-        print("❌ خيار غير صحيح، جرب مرة ثانية.\n")
+    // تنظيف الحقول
+    document.getElementById('exercise').value = "";
+    document.getElementById('weight').value = "";
+    document.getElementById('reps').value = "";
+    document.getElementById('sets').value = "";
+}
+
+// تحميل التمارين من localStorage عند فتح الصفحة
+window.onload = function() {
+    let workouts = JSON.parse(localStorage.getItem('workouts') || "[]");
+    workouts.forEach(w => {
+        const table = document.getElementById('workoutTable');
+        const row = table.insertRow();
+        row.insertCell(0).innerText = w.exercise;
+        row.insertCell(1).innerText = w.weight;
+        row.insertCell(2).innerText = w.reps;
+        row.insertCell(3).innerText = w.sets;
+    });
+}
+</script>
+</body>
+</html>

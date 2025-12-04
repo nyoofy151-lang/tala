@@ -1,37 +1,46 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ultra Fitness</title>
+
+<!-- Bootstrap CSS -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- FontAwesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <style>
 :root {
-    --card: #1e1e1e;
+    --dark-bg: #121212;
+    --dark-card: #1e1e1e;
     --accent: #0af;
     --accent-hover: #33cfff;
-    --text-color: #ffffff;
-    --text-color-light: #000000;
+    --text-light: #ffffff;
+    --text-dark: #000000;
 }
 body {
-    background: #121212;
-    color: var(--text-color);
+    background: var(--dark-bg);
+    color: var(--text-light);
     font-family: Arial, sans-serif;
 }
 body.light {
     background: #f0f0f0;
-    color: var(--text-color-light);
+    color: var(--text-dark);
 }
 .card {
-    background: var(--card);
+    background: var(--dark-card);
     border-radius: 16px;
     border: none;
-    color: var(--text-color);
+    color: var(--text-light);
 }
 body.light .card {
     background: #fff;
-    color: var(--text-color-light);
+    color: var(--text-dark);
 }
 .btn-main {
     background: var(--accent);
@@ -42,23 +51,17 @@ body.light .card {
 .btn-main:hover {
     background: var(--accent-hover);
 }
-.page {
-    display: none;
-}
-.page.active {
-    display: block;
-}
-.navbar {
-    background: #000 !important;
-}
+.page { display: none; }
+.page.active { display: block; }
+.navbar { background: #000 !important; }
 .nav-btn {
     cursor: pointer;
     padding: 10px 15px;
     margin: 5px;
-    background: var(--card);
+    background: var(--dark-card);
     border-radius: 10px;
     display: inline-block;
-    color: var(--text-color);
+    color: var(--text-light);
     transition: 0.2s;
 }
 .nav-btn:hover {
@@ -71,7 +74,7 @@ body.light .card {
     border-radius: 20px;
     margin: 5px;
     cursor: pointer;
-    color: var(--text-color);
+    color: var(--text-light);
     transition: 0.2s;
 }
 .category-pill:hover {
@@ -88,8 +91,8 @@ body.light input, body.light select {
     color: #000 !important;
 }
 .table-dark {
-    background: var(--card);
-    color: var(--text-color);
+    background: var(--dark-card);
+    color: var(--text-light);
 }
 body.light .table-dark {
     background: #fff;
@@ -97,6 +100,13 @@ body.light .table-dark {
 }
 .hidden { display: none; }
 .progress-img { width: 100%; border-radius: 12px; }
+.position-relative button {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    font-size: 14px;
+    padding: 2px 5px;
+}
 </style>
 </head>
 <body>
@@ -237,45 +247,38 @@ body.light .table-dark {
 </div>
 
 <script>
-// ============================================
-// 1) إدارة الصفحات
-function showPage(id) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+// =================== إدارة الصفحات ===================
+function showPage(id){
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
     document.getElementById(id).classList.add('active');
 }
 
-// 2) نظام الثيم النهاري/الليلي
-function toggleTheme() {
+// =================== الثيم ===================
+function toggleTheme(){
     document.body.classList.toggle('light');
+    localStorage.setItem('theme', document.body.classList.contains('light')?'light':'dark');
 }
+if(localStorage.getItem('theme')==='light') document.body.classList.add('light');
 
-// 3) بيانات التمارين
-let workouts = JSON.parse(localStorage.getItem("workouts") || "[]");
+// =================== التمارين ===================
+let workouts = JSON.parse(localStorage.getItem("workouts")||"[]");
 let selectedCategory = "";
 let workoutTable = document.getElementById("workoutTable");
 
-function setCat(cat) {
-    selectedCategory = cat;
-    document.getElementById("selectedCat").innerText = cat;
-}
+function setCat(cat){ selectedCategory=cat; document.getElementById("selectedCat").innerText=cat; }
+function saveWorkouts(){ localStorage.setItem("workouts",JSON.stringify(workouts)); }
 
-function saveWorkouts() {
-    localStorage.setItem("workouts", JSON.stringify(workouts));
-}
-
-function addWorkout() {
-    let name = document.getElementById("w_name").value;
-    let weight = document.getElementById("w_weight").value;
-    let reps = document.getElementById("w_reps").value;
-    let sets = document.getElementById("w_sets").value;
-    if(!selectedCategory || !name || !weight || !reps || !sets){
-        alert("⚠ الرجاء تعبئة جميع البيانات واختيار القسم");
-        return;
-    }
-    workouts.push({category:selectedCategory, name, weight, reps, sets});
+function addWorkout(){
+    let name=document.getElementById("w_name").value;
+    let weight=document.getElementById("w_weight").value;
+    let reps=document.getElementById("w_reps").value;
+    let sets=document.getElementById("w_sets").value;
+    if(!selectedCategory||!name||!weight||!reps||!sets){ alert("⚠ الرجاء تعبئة جميع البيانات واختيار القسم"); return; }
+    workouts.push({category:selectedCategory,name,weight,reps,sets});
     saveWorkouts();
     loadWorkoutTable();
     clearWorkoutForm();
+    alert("✅ تم إضافة التمرين بنجاح");
 }
 
 function clearWorkoutForm(){
@@ -286,16 +289,9 @@ function clearWorkoutForm(){
 }
 
 function loadWorkoutTable(){
-    workoutTable.innerHTML = `
-        <tr>
-            <th>القسم</th>
-            <th>التمرين</th>
-            <th>الوزن</th>
-            <th>العدات</th>
-            <th>الجلسات</th>
-            <th>تعديل</th>
-            <th>حذف</th>
-        </tr>`;
+    workoutTable.innerHTML=`<tr>
+        <th>القسم</th><th>التمرين</th><th>الوزن</th><th>العدات</th><th>الجلسات</th><th>تعديل</th><th>حذف</th>
+    </tr>`;
     workouts.forEach((w,i)=>{
         let row = workoutTable.insertRow();
         row.insertCell(0).innerText=w.category;
@@ -309,164 +305,162 @@ function loadWorkoutTable(){
 }
 
 function editWorkout(i){
-    let w = workouts[i];
-    let newName = prompt("اسم التمرين:", w.name) || w.name;
-    let newWeight = prompt("الوزن:", w.weight) || w.weight;
-    let newReps = prompt("العدات:", w.reps) || w.reps;
-    let newSets = prompt("الجلسات:", w.sets) || w.sets;
-    workouts[i]={category:w.category, name:newName, weight:newWeight, reps:newReps, sets:newSets};
-    saveWorkouts();
-    loadWorkoutTable();
+    let w=workouts[i];
+    let newName=prompt("اسم التمرين:",w.name)||w.name;
+    let newWeight=prompt("الوزن:",w.weight)||w.weight;
+    let newReps=prompt("العدات:",w.reps)||w.reps;
+    let newSets=prompt("الجلسات:",w.sets)||w.sets;
+    workouts[i]={category:w.category,name:newName,weight:newWeight,reps:newReps,sets:newSets};
+    saveWorkouts(); loadWorkoutTable();
 }
 
-function deleteWorkout(i){
-    if(confirm("هل تريد حذف هذا التمرين؟")){
-        workouts.splice(i,1);
-        saveWorkouts();
-        loadWorkoutTable();
-    }
-}
+function deleteWorkout(i){ if(confirm("هل تريد حذف هذا التمرين؟")){ workouts.splice(i,1); saveWorkouts(); loadWorkoutTable(); } }
 
 function searchWorkouts(){
-    let filter = document.getElementById("searchBox").value.toLowerCase();
-    Array.from(workoutTable.rows).forEach((row,i)=>{
-        if(i==0) return;
-        row.style.display = row.innerText.toLowerCase().includes(filter) ? "" : "none";
-    });
+    let filter=document.getElementById("searchBox").value.toLowerCase();
+    Array.from(workoutTable.rows).forEach((row,i)=>{ if(i==0) return; row.style.display=row.innerText.toLowerCase().includes(filter)?"":"none"; });
 }
 
-// الأسبوعي
-let weekPlan = JSON.parse(localStorage.getItem("weekPlan") || "{}");
-
+// =================== البرنامج الأسبوعي ===================
+let weekPlan = JSON.parse(localStorage.getItem("weekPlan")||"{}");
 function addDayWorkout(){
-    let day = document.getElementById("daySelect").value;
-    let w = document.getElementById("dayWorkout").value;
+    let day=document.getElementById("daySelect").value;
+    let w=document.getElementById("dayWorkout").value;
     if(!w){ alert("⚠ أدخل اسم التمرين"); return; }
     if(!weekPlan[day]) weekPlan[day]=[];
     weekPlan[day].push(w);
-    localStorage.setItem("weekPlan", JSON.stringify(weekPlan));
+    localStorage.setItem("weekPlan",JSON.stringify(weekPlan));
     loadWeekList();
     document.getElementById("dayWorkout").value="";
 }
 
 function loadWeekList(){
-    let ul = document.getElementById("weekList");
+    let ul=document.getElementById("weekList");
     ul.innerHTML="";
-    for(let day of ["السبت","الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة"]){
+    ["السبت","الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة"].forEach(day=>{
         if(weekPlan[day]){
-            let li = document.createElement("li");
+            let li=document.createElement("li");
             li.innerHTML=`<b>${day}:</b> ${weekPlan[day].join(", ")}`;
             ul.appendChild(li);
         }
-    }
+    });
 }
 
-// التقدم
-let weightData = JSON.parse(localStorage.getItem("weightData") || "[]");
-let imgData = JSON.parse(localStorage.getItem("imgData") || "[]");
+// =================== التقدم ===================
+let weightData = JSON.parse(localStorage.getItem("weightData")||"[]");
+let imgData = JSON.parse(localStorage.getItem("imgData")||"[]");
 
 function addWeight(){
-    let w = document.getElementById("bodyWeight").value;
+    let w=document.getElementById("bodyWeight").value;
     if(!w) return;
-    let today = new Date().toLocaleDateString();
+    let today=new Date().toLocaleDateString();
     weightData.push({date:today,value:w});
-    localStorage.setItem("weightData", JSON.stringify(weightData));
+    localStorage.setItem("weightData",JSON.stringify(weightData));
     loadWeightChart();
     document.getElementById("bodyWeight").value="";
 }
 
 function loadWeightChart(){
-    let ctx = document.getElementById("weightChart").getContext("2d");
+    let ctx=document.getElementById("weightChart").getContext("2d");
     if(window.weightChart) window.weightChart.destroy();
-    window.weightChart = new Chart(ctx,{
+    window.weightChart=new Chart(ctx,{
         type:'line',
         data:{
             labels: weightData.map(d=>d.date),
-            datasets:[{label:"وزن الجسم", data:weightData.map(d=>d.value), borderColor:"#0af", backgroundColor:"#0af33"}]
+            datasets:[{
+                label:"وزن الجسم",
+                data:weightData.map(d=>d.value),
+                borderColor:"#0af",
+                backgroundColor:"#0af33"
+            }]
         }
     });
 }
 
 function uploadImage(){
-    let file = document.getElementById("progressImg").files[0];
+    let file=document.getElementById("progressImg").files[0];
     if(!file) return;
-    let reader = new FileReader();
-    reader.onload = e=>{
+    let reader=new FileReader();
+    reader.onload=e=>{
         imgData.push(e.target.result);
-        localStorage.setItem("imgData", JSON.stringify(imgData));
+        localStorage.setItem("imgData",JSON.stringify(imgData));
         loadImages();
     };
     reader.readAsDataURL(file);
 }
 
 function loadImages(){
-    let gallery = document.getElementById("imgGallery");
+    let gallery=document.getElementById("imgGallery");
     gallery.innerHTML="";
-    imgData.forEach(src=>{
-        let div = document.createElement("div");
-        div.className="col-md-3 mb-3";
-        div.innerHTML=`<img src="${src}" class="progress-img">`;
+    imgData.forEach((src,i)=>{
+        let div=document.createElement("div");
+        div.className="col-md-3 mb-3 position-relative";
+        div.innerHTML=`<img src="${src}" class="progress-img">
+                       <button class="btn btn-danger position-absolute" onclick="deleteImage(${i})">🗑</button>`;
         gallery.appendChild(div);
     });
 }
 
-// الإحصائيات
-function loadExerciseStats(){
-    let ctx = document.getElementById("exerciseChart").getContext("2d");
-    let counts = {};
-    workouts.forEach(w=> counts[w.category]= (counts[w.category]||0)+1 );
+function deleteImage(i){
+    if(confirm("هل تريد حذف هذه الصورة؟")){
+        imgData.splice(i,1);
+        localStorage.setItem("imgData",JSON.stringify(imgData));
+        loadImages();
+    }
+}
+
+// =================== الإحصائيات ===================
+function loadExerciseChart(){
+    let counts={};
+    workouts.forEach(w=>counts[w.category]=(counts[w.category]||0)+1);
+    let ctx=document.getElementById("exerciseChart").getContext("2d");
     if(window.exerciseChart) window.exerciseChart.destroy();
-    window.exerciseChart = new Chart(ctx,{
+    window.exerciseChart=new Chart(ctx,{
         type:'bar',
         data:{
             labels:Object.keys(counts),
-            datasets:[{label:"عدد التمارين",data:Object.values(counts), backgroundColor:"#0af"}]
+            datasets:[{
+                label:"عدد التمارين لكل قسم",
+                data:Object.values(counts),
+                backgroundColor:"#0af"
+            }]
         }
     });
 }
 
-// التصدير والاستيراد
+// =================== إدارة البيانات ===================
 function exportData(){
-    let data = {workouts, weekPlan, weightData, imgData};
-    let blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
+    let data={workouts,weekPlan,weightData,imgData};
+    let blob=new Blob([JSON.stringify(data)],{type:"application/json"});
     let a=document.createElement("a");
     a.href=URL.createObjectURL(blob);
-    a.download="fitness_data.json";
+    a.download="UltraFitnessData.json";
     a.click();
 }
 
 function importData(){
-    let file = document.getElementById("importFile").files[0];
+    let file=document.getElementById("importFile").files[0];
     if(!file) return;
-    let reader = new FileReader();
-    reader.onload = e=>{
-        let data = JSON.parse(e.target.result);
-        workouts=data.workouts || [];
-        weekPlan=data.weekPlan || {};
-        weightData=data.weightData || [];
-        imgData=data.imgData || [];
+    let reader=new FileReader();
+    reader.onload=e=>{
+        let data=JSON.parse(e.target.result);
+        workouts=data.workouts||[]; weekPlan=data.weekPlan||{}; weightData=data.weightData||[]; imgData=data.imgData||[];
         saveWorkouts();
-        loadWorkoutTable();
-        loadWeekList();
-        loadWeightChart();
-        loadImages();
-        loadExerciseStats();
-        alert("✅ تم الاستيراد بنجاح");
+        localStorage.setItem("weekPlan",JSON.stringify(weekPlan));
+        localStorage.setItem("weightData",JSON.stringify(weightData));
+        localStorage.setItem("imgData",JSON.stringify(imgData));
+        loadWorkoutTable(); loadWeekList(); loadWeightChart(); loadImages(); loadExerciseChart();
+        alert("✅ تم استيراد البيانات بنجاح");
     };
     reader.readAsText(file);
 }
 
-// مسح كل البيانات
 function resetAll(){
-    if(confirm("⚠ هل تريد مسح كل البيانات؟")){
-        localStorage.clear();
-        workouts=[]; weekPlan={}; weightData=[]; imgData=[];
-        loadWorkoutTable(); loadWeekList(); loadWeightChart(); loadImages(); loadExerciseStats();
-    }
+    if(confirm("⚠ هل تريد مسح كل البيانات؟")){ localStorage.clear(); location.reload(); }
 }
 
-// تحميل أولي
-loadWorkoutTable(); loadWeekList(); loadWeightChart(); loadImages(); loadExerciseStats();
+// =================== تحميل البيانات عند البداية ===================
+loadWorkoutTable(); loadWeekList(); loadWeightChart(); loadImages(); loadExerciseChart();
 </script>
 
 </body>

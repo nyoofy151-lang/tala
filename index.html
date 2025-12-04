@@ -2,98 +2,472 @@
 <html lang="ar">
 <head>
 <meta charset="UTF-8">
-<title>سجل التمارين</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ultra Fitness</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        background: linear-gradient(135deg, #1e1e2f, #2b2b44);
-        color: #fff;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        min-height: 100vh;
-        margin: 0;
-    }
-    h1 { color: #ff4081; margin-bottom: 20px; }
-    input, button {
-        padding: 10px;
-        margin: 5px;
-        border: none;
-        border-radius: 5px;
-        font-size: 16px;
-    }
-    input { width: 200px; }
-    button { background: #ff4081; color: #fff; cursor: pointer; transition: 0.3s; }
-    button:hover { background: #ff1f70; }
-    table { margin-top: 20px; border-collapse: collapse; width: 90%; }
-    th, td { border: 1px solid #fff; padding: 10px; text-align: center; }
-    th { background: #ff4081; }
+:root {
+    --card: #1e1e1e;
+    --accent: #0af;
+    --accent-hover: #33cfff;
+    --text-color: #ffffff;
+    --text-color-light: #000000;
+}
+body {
+    background: #121212;
+    color: var(--text-color);
+    font-family: Arial, sans-serif;
+}
+body.light {
+    background: #f0f0f0;
+    color: var(--text-color-light);
+}
+.card {
+    background: var(--card);
+    border-radius: 16px;
+    border: none;
+    color: var(--text-color);
+}
+body.light .card {
+    background: #fff;
+    color: var(--text-color-light);
+}
+.btn-main {
+    background: var(--accent);
+    color: white;
+    border-radius: 10px;
+    transition: 0.2s;
+}
+.btn-main:hover {
+    background: var(--accent-hover);
+}
+.page {
+    display: none;
+}
+.page.active {
+    display: block;
+}
+.navbar {
+    background: #000 !important;
+}
+.nav-btn {
+    cursor: pointer;
+    padding: 10px 15px;
+    margin: 5px;
+    background: var(--card);
+    border-radius: 10px;
+    display: inline-block;
+    color: var(--text-color);
+    transition: 0.2s;
+}
+.nav-btn:hover {
+    background: var(--accent);
+    color: black;
+}
+.category-pill {
+    padding: 8px 15px;
+    background: #222;
+    border-radius: 20px;
+    margin: 5px;
+    cursor: pointer;
+    color: var(--text-color);
+    transition: 0.2s;
+}
+.category-pill:hover {
+    background: var(--accent);
+    color: black;
+}
+input, select {
+    background: #2a2a2a !important;
+    color: white !important;
+    border: none !important;
+}
+body.light input, body.light select {
+    background: #fff !important;
+    color: #000 !important;
+}
+.table-dark {
+    background: var(--card);
+    color: var(--text-color);
+}
+body.light .table-dark {
+    background: #fff;
+    color: #000;
+}
+.hidden { display: none; }
+.progress-img { width: 100%; border-radius: 12px; }
 </style>
 </head>
 <body>
-<h1>📋 سجل التمارين</h1>
 
-<div>
-    <input type="text" id="exercise" placeholder="اسم التمرين">
-    <input type="number" id="weight" placeholder="الوزن (كجم)">
-    <input type="number" id="reps" placeholder="عدد العدات">
-    <input type="number" id="sets" placeholder="عدد الجلسات">
-    <button onclick="addWorkout()">➕ أضف التمرين</button>
+<!-- NAVIGATION -->
+<nav class="navbar navbar-dark p-3 mb-4">
+    <div class="container d-flex justify-content-between">
+        <h3 class="m-0">🏋‍♂ Ultra Fitness</h3>
+        <button class="btn btn-main" onclick="toggleTheme()">🌓 وضع</button>
+    </div>
+</nav>
+
+<!-- TOP NAV -->
+<div class="container mb-4 text-center">
+    <span class="nav-btn" onclick="showPage('home')"><i class="fa fa-home"></i> الرئيسية</span>
+    <span class="nav-btn" onclick="showPage('workouts')"><i class="fa fa-dumbbell"></i> التمارين</span>
+    <span class="nav-btn" onclick="showPage('week')"><i class="fa fa-calendar-week"></i> البرنامج الأسبوعي</span>
+    <span class="nav-btn" onclick="showPage('progress')"><i class="fa fa-chart-line"></i> التقدم</span>
+    <span class="nav-btn" onclick="showPage('stats')"><i class="fa fa-chart-bar"></i> الإحصائيات</span>
+    <span class="nav-btn" onclick="showPage('settings')"><i class="fa fa-gear"></i> إدارة</span>
 </div>
 
-<table id="workoutTable">
-    <tr>
-        <th>التمرين</th>
-        <th>الوزن (كجم)</th>
-        <th>العدات</th>
-        <th>الجلسات</th>
-    </tr>
-</table>
+<!-- HOME PAGE -->
+<div class="container page active" id="home">
+    <div class="card p-4 mb-4">
+        <h2>🔥 مرحباً بك في Ultra Fitness</h2>
+        <p>أقوى نظام تمارين كامل داخل ملف واحد فقط.</p>
+        <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b" class="img-fluid rounded mt-3">
+    </div>
+    <div class="card p-4 mb-4">
+        <h4>🎯 ماذا يمكنك أن تفعل هنا؟</h4>
+        <ul style="font-size:18px;">
+            <li>إدارة تمارينك اليومية</li>
+            <li>إضافة / تعديل / حذف التمارين</li>
+            <li>برنامج أسبوعي كامل</li>
+            <li>متابعة تقدم وزنك</li>
+            <li>رفع صور Before / After</li>
+            <li>رسم بياني احترافي لتقدمك</li>
+            <li>تايمر للجلسات ووقت الراحة</li>
+            <li>استيراد وتصدير كامل للبيانات</li>
+        </ul>
+    </div>
+</div>
+
+<!-- WORKOUTS PAGE -->
+<div class="container page" id="workouts">
+    <div class="card p-4 mb-4">
+        <h3>💪 إضافة تمرين جديد</h3>
+        <div>
+            <span class="category-pill" onclick="setCat('صدر')">صدر</span>
+            <span class="category-pill" onclick="setCat('ظهر')">ظهر</span>
+            <span class="category-pill" onclick="setCat('كتاف')">كتاف</span>
+            <span class="category-pill" onclick="setCat('ذراع')">ذراع</span>
+            <span class="category-pill" onclick="setCat('أرجل')">أرجل</span>
+            <span class="category-pill" onclick="setCat('كارديو')">كارديو</span>
+        </div>
+        <h5 class="mt-2">القسم المختار: <span id="selectedCat" style="color:var(--accent)">لا شيء</span></h5>
+        <div class="row mt-3">
+            <div class="col-md-4 mb-2"><input id="w_name" class="form-control" placeholder="اسم التمرين"></div>
+            <div class="col-md-2 mb-2"><input id="w_weight" type="number" class="form-control" placeholder="وزن"></div>
+            <div class="col-md-2 mb-2"><input id="w_reps" type="number" class="form-control" placeholder="عدات"></div>
+            <div class="col-md-2 mb-2"><input id="w_sets" type="number" class="form-control" placeholder="جلسات"></div>
+            <div class="col-md-2 mb-2"><button class="btn btn-main w-100" onclick="addWorkout()">إضافة</button></div>
+        </div>
+        <input id="searchBox" class="form-control mt-3" placeholder="بحث…" onkeyup="searchWorkouts()">
+    </div>
+    <div class="card p-4 mb-4">
+        <h3>📋 قائمة التمارين</h3>
+        <table class="table table-dark text-center" id="workoutTable">
+            <tr>
+                <th>القسم</th>
+                <th>التمرين</th>
+                <th>الوزن</th>
+                <th>العدات</th>
+                <th>الجلسات</th>
+                <th>تعديل</th>
+                <th>حذف</th>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<!-- WEEK PAGE -->
+<div class="container page" id="week">
+    <div class="card p-4 mb-4">
+        <h3>📆 برنامجك الأسبوعي</h3>
+        <select id="daySelect" class="form-control mb-3">
+            <option>السبت</option>
+            <option>الأحد</option>
+            <option>الاثنين</option>
+            <option>الثلاثاء</option>
+            <option>الأربعاء</option>
+            <option>الخميس</option>
+            <option>الجمعة</option>
+        </select>
+        <input id="dayWorkout" class="form-control mb-3" placeholder="تمرين اليوم">
+        <button class="btn btn-main w-100" onclick="addDayWorkout()">✔ إضافة لجدول اليوم</button>
+    </div>
+    <div class="card p-4 mb-4">
+        <h3>📋 الجدول الكامل</h3>
+        <ul id="weekList" style="font-size:20px;"></ul>
+    </div>
+</div>
+
+<!-- PROGRESS PAGE -->
+<div class="container page" id="progress">
+    <div class="card p-4 mb-4">
+        <h3>⚖ وزن الجسم</h3>
+        <div class="row">
+            <div class="col-md-6 mb-3"><input id="bodyWeight" type="number" class="form-control" placeholder="وزنك الآن"></div>
+            <div class="col-md-6 mb-3"><button class="btn btn-main w-100" onclick="addWeight()">إضافة الوزن</button></div>
+        </div>
+        <canvas id="weightChart"></canvas>
+    </div>
+    <div class="card p-4 mb-4">
+        <h3>📸 صور Before & After</h3>
+        <input id="progressImg" type="file" accept="image/*" class="form-control" onchange="uploadImage()">
+        <div class="row mt-3" id="imgGallery"></div>
+    </div>
+</div>
+
+<!-- STATS PAGE -->
+<div class="container page" id="stats">
+    <div class="card p-4 mb-4">
+        <h3>📊 إحصائيات التمارين</h3>
+        <canvas id="exerciseChart"></canvas>
+    </div>
+</div>
+
+<!-- SETTINGS PAGE -->
+<div class="container page" id="settings">
+    <div class="card p-4 mb-4">
+        <h3>⚙ إدارة البيانات</h3>
+        <button class="btn btn-main w-100 mb-3" onclick="exportData()">📤 تصدير كامل</button>
+        <input id="importFile" class="form-control mb-3" type="file" onchange="importData()">
+        <button class="btn btn-danger w-100" onclick="resetAll()">🗑 مسح كل البيانات</button>
+    </div>
+</div>
 
 <script>
-function addWorkout() {
-    const exercise = document.getElementById('exercise').value;
-    const weight = document.getElementById('weight').value;
-    const reps = document.getElementById('reps').value;
-    const sets = document.getElementById('sets').value;
+// ============================================
+// 1) إدارة الصفحات
+function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+}
 
-    if (!exercise || !weight || !reps || !sets) {
-        alert("❌ املأ كل الحقول!");
+// 2) نظام الثيم النهاري/الليلي
+function toggleTheme() {
+    document.body.classList.toggle('light');
+}
+
+// 3) بيانات التمارين
+let workouts = JSON.parse(localStorage.getItem("workouts") || "[]");
+let selectedCategory = "";
+let workoutTable = document.getElementById("workoutTable");
+
+function setCat(cat) {
+    selectedCategory = cat;
+    document.getElementById("selectedCat").innerText = cat;
+}
+
+function saveWorkouts() {
+    localStorage.setItem("workouts", JSON.stringify(workouts));
+}
+
+function addWorkout() {
+    let name = document.getElementById("w_name").value;
+    let weight = document.getElementById("w_weight").value;
+    let reps = document.getElementById("w_reps").value;
+    let sets = document.getElementById("w_sets").value;
+    if(!selectedCategory || !name || !weight || !reps || !sets){
+        alert("⚠ الرجاء تعبئة جميع البيانات واختيار القسم");
         return;
     }
-
-    const table = document.getElementById('workoutTable');
-    const row = table.insertRow();
-    row.insertCell(0).innerText = exercise;
-    row.insertCell(1).innerText = weight;
-    row.insertCell(2).innerText = reps;
-    row.insertCell(3).innerText = sets;
-
-    // حفظ في localStorage
-    let workouts = JSON.parse(localStorage.getItem('workouts') || "[]");
-    workouts.push({exercise, weight, reps, sets});
-    localStorage.setItem('workouts', JSON.stringify(workouts));
-
-    // تنظيف الحقول
-    document.getElementById('exercise').value = "";
-    document.getElementById('weight').value = "";
-    document.getElementById('reps').value = "";
-    document.getElementById('sets').value = "";
+    workouts.push({category:selectedCategory, name, weight, reps, sets});
+    saveWorkouts();
+    loadWorkoutTable();
+    clearWorkoutForm();
 }
 
-// تحميل التمارين من localStorage عند فتح الصفحة
-window.onload = function() {
-    let workouts = JSON.parse(localStorage.getItem('workouts') || "[]");
-    workouts.forEach(w => {
-        const table = document.getElementById('workoutTable');
-        const row = table.insertRow();
-        row.insertCell(0).innerText = w.exercise;
-        row.insertCell(1).innerText = w.weight;
-        row.insertCell(2).innerText = w.reps;
-        row.insertCell(3).innerText = w.sets;
+function clearWorkoutForm(){
+    document.getElementById("w_name").value="";
+    document.getElementById("w_weight").value="";
+    document.getElementById("w_reps").value="";
+    document.getElementById("w_sets").value="";
+}
+
+function loadWorkoutTable(){
+    workoutTable.innerHTML = `
+        <tr>
+            <th>القسم</th>
+            <th>التمرين</th>
+            <th>الوزن</th>
+            <th>العدات</th>
+            <th>الجلسات</th>
+            <th>تعديل</th>
+            <th>حذف</th>
+        </tr>`;
+    workouts.forEach((w,i)=>{
+        let row = workoutTable.insertRow();
+        row.insertCell(0).innerText=w.category;
+        row.insertCell(1).innerText=w.name;
+        row.insertCell(2).innerText=w.weight;
+        row.insertCell(3).innerText=w.reps;
+        row.insertCell(4).innerText=w.sets;
+        row.insertCell(5).innerHTML=`<button class="btn btn-warning btn-sm" onclick="editWorkout(${i})">✏</button>`;
+        row.insertCell(6).innerHTML=`<button class="btn btn-danger btn-sm" onclick="deleteWorkout(${i})">🗑</button>`;
     });
 }
+
+function editWorkout(i){
+    let w = workouts[i];
+    let newName = prompt("اسم التمرين:", w.name) || w.name;
+    let newWeight = prompt("الوزن:", w.weight) || w.weight;
+    let newReps = prompt("العدات:", w.reps) || w.reps;
+    let newSets = prompt("الجلسات:", w.sets) || w.sets;
+    workouts[i]={category:w.category, name:newName, weight:newWeight, reps:newReps, sets:newSets};
+    saveWorkouts();
+    loadWorkoutTable();
+}
+
+function deleteWorkout(i){
+    if(confirm("هل تريد حذف هذا التمرين؟")){
+        workouts.splice(i,1);
+        saveWorkouts();
+        loadWorkoutTable();
+    }
+}
+
+function searchWorkouts(){
+    let filter = document.getElementById("searchBox").value.toLowerCase();
+    Array.from(workoutTable.rows).forEach((row,i)=>{
+        if(i==0) return;
+        row.style.display = row.innerText.toLowerCase().includes(filter) ? "" : "none";
+    });
+}
+
+// الأسبوعي
+let weekPlan = JSON.parse(localStorage.getItem("weekPlan") || "{}");
+
+function addDayWorkout(){
+    let day = document.getElementById("daySelect").value;
+    let w = document.getElementById("dayWorkout").value;
+    if(!w){ alert("⚠ أدخل اسم التمرين"); return; }
+    if(!weekPlan[day]) weekPlan[day]=[];
+    weekPlan[day].push(w);
+    localStorage.setItem("weekPlan", JSON.stringify(weekPlan));
+    loadWeekList();
+    document.getElementById("dayWorkout").value="";
+}
+
+function loadWeekList(){
+    let ul = document.getElementById("weekList");
+    ul.innerHTML="";
+    for(let day of ["السبت","الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة"]){
+        if(weekPlan[day]){
+            let li = document.createElement("li");
+            li.innerHTML=`<b>${day}:</b> ${weekPlan[day].join(", ")}`;
+            ul.appendChild(li);
+        }
+    }
+}
+
+// التقدم
+let weightData = JSON.parse(localStorage.getItem("weightData") || "[]");
+let imgData = JSON.parse(localStorage.getItem("imgData") || "[]");
+
+function addWeight(){
+    let w = document.getElementById("bodyWeight").value;
+    if(!w) return;
+    let today = new Date().toLocaleDateString();
+    weightData.push({date:today,value:w});
+    localStorage.setItem("weightData", JSON.stringify(weightData));
+    loadWeightChart();
+    document.getElementById("bodyWeight").value="";
+}
+
+function loadWeightChart(){
+    let ctx = document.getElementById("weightChart").getContext("2d");
+    if(window.weightChart) window.weightChart.destroy();
+    window.weightChart = new Chart(ctx,{
+        type:'line',
+        data:{
+            labels: weightData.map(d=>d.date),
+            datasets:[{label:"وزن الجسم", data:weightData.map(d=>d.value), borderColor:"#0af", backgroundColor:"#0af33"}]
+        }
+    });
+}
+
+function uploadImage(){
+    let file = document.getElementById("progressImg").files[0];
+    if(!file) return;
+    let reader = new FileReader();
+    reader.onload = e=>{
+        imgData.push(e.target.result);
+        localStorage.setItem("imgData", JSON.stringify(imgData));
+        loadImages();
+    };
+    reader.readAsDataURL(file);
+}
+
+function loadImages(){
+    let gallery = document.getElementById("imgGallery");
+    gallery.innerHTML="";
+    imgData.forEach(src=>{
+        let div = document.createElement("div");
+        div.className="col-md-3 mb-3";
+        div.innerHTML=`<img src="${src}" class="progress-img">`;
+        gallery.appendChild(div);
+    });
+}
+
+// الإحصائيات
+function loadExerciseStats(){
+    let ctx = document.getElementById("exerciseChart").getContext("2d");
+    let counts = {};
+    workouts.forEach(w=> counts[w.category]= (counts[w.category]||0)+1 );
+    if(window.exerciseChart) window.exerciseChart.destroy();
+    window.exerciseChart = new Chart(ctx,{
+        type:'bar',
+        data:{
+            labels:Object.keys(counts),
+            datasets:[{label:"عدد التمارين",data:Object.values(counts), backgroundColor:"#0af"}]
+        }
+    });
+}
+
+// التصدير والاستيراد
+function exportData(){
+    let data = {workouts, weekPlan, weightData, imgData};
+    let blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
+    let a=document.createElement("a");
+    a.href=URL.createObjectURL(blob);
+    a.download="fitness_data.json";
+    a.click();
+}
+
+function importData(){
+    let file = document.getElementById("importFile").files[0];
+    if(!file) return;
+    let reader = new FileReader();
+    reader.onload = e=>{
+        let data = JSON.parse(e.target.result);
+        workouts=data.workouts || [];
+        weekPlan=data.weekPlan || {};
+        weightData=data.weightData || [];
+        imgData=data.imgData || [];
+        saveWorkouts();
+        loadWorkoutTable();
+        loadWeekList();
+        loadWeightChart();
+        loadImages();
+        loadExerciseStats();
+        alert("✅ تم الاستيراد بنجاح");
+    };
+    reader.readAsText(file);
+}
+
+// مسح كل البيانات
+function resetAll(){
+    if(confirm("⚠ هل تريد مسح كل البيانات؟")){
+        localStorage.clear();
+        workouts=[]; weekPlan={}; weightData=[]; imgData=[];
+        loadWorkoutTable(); loadWeekList(); loadWeightChart(); loadImages(); loadExerciseStats();
+    }
+}
+
+// تحميل أولي
+loadWorkoutTable(); loadWeekList(); loadWeightChart(); loadImages(); loadExerciseStats();
 </script>
+
 </body>
 </html>

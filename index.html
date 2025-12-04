@@ -461,7 +461,57 @@ function resetAll(){
 
 // =================== تحميل البيانات عند البداية ===================
 loadWorkoutTable(); loadWeekList(); loadWeightChart(); loadImages(); loadExerciseChart();
+    // =================== تايمر التمرين ===================
+let timerInterval;
+let timerSeconds = 0;
+let timerMode = "تمرین"; // تمرين أو راحة
+
+function startTimer(workDuration=30, restDuration=15) {
+    clearInterval(timerInterval);
+    timerSeconds = workDuration;
+    timerMode = "تمرین";
+    showTimerUI();
+    timerInterval = setInterval(() => {
+        document.getElementById("timerDisplay").innerText = `${timerMode}: ${timerSeconds}s`;
+        timerSeconds--;
+        if (timerSeconds < 0) {
+            if (timerMode === "تمرین") {
+                timerMode = "راحة";
+                timerSeconds = restDuration;
+            } else {
+                timerMode = "تمرین";
+                timerSeconds = workDuration;
+            }
+        }
+    }, 1000);
+}
+
+function stopTimer() {
+    clearInterval(timerInterval);
+    document.getElementById("timerDisplay").innerText = "⏱ تم إيقاف المؤقت";
+}
+
+function showTimerUI() {
+    if(!document.getElementById("timerContainer")) {
+        let div = document.createElement("div");
+        div.id = "timerContainer";
+        div.className = "card p-4 mb-4";
+        div.innerHTML = `
+            <h3>⏱ مؤقت التمرين</h3>
+            <div class="row mb-3">
+                <div class="col-md-4"><input id="workInput" type="number" class="form-control" placeholder="ثواني التمرين"></div>
+                <div class="col-md-4"><input id="restInput" type="number" class="form-control" placeholder="ثواني الراحة"></div>
+                <div class="col-md-4"><button class="btn btn-main w-100" onclick="startTimer(+document.getElementById('workInput').value||30, +document.getElementById('restInput').value||15)">▶ ابدأ</button></div>
+            </div>
+            <h2 id="timerDisplay">⏱ جاهز للانطلاق</h2>
+            <button class="btn btn-danger mt-2" onclick="stopTimer()">■ إيقاف</button>
+        `;
+        document.body.prepend(div);
+    }
+}
+
 </script>
 
 </body>
 </html>
+
